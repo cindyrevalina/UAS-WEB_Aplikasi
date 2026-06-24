@@ -62,9 +62,8 @@ Sistem mendukung pengunggahan foto menggunakan objek **FormData**.
 
 Format file yang didukung:
 
-* JPG
-* JPEG
-* PNG
+<img width="1600" height="765" alt="image" src="https://github.com/user-attachments/assets/f3ba82c4-9075-4955-ad5b-c65409abcf0b" />
+
 
 Validasi yang diterapkan:
 
@@ -152,7 +151,7 @@ Fungsi:
 
 ---
 
-# 🗄️ Struktur Database
+#  Struktur Database
 
 Nama Database:
 
