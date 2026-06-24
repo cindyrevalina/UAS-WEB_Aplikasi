@@ -24,7 +24,7 @@ Tujuan pengembangan E-Report adalah:
 
 ---
 
-# ✨ Fitur Utama
+#  Fitur Utama
 
 ##  Autentikasi Pengguna
 
@@ -340,3 +340,6 @@ Dashboard administrator digunakan untuk mengelola seluruh laporan masyarakat yan
 # 👨‍💻 Pengembang
 
 Proyek ini dikembangkan sebagai Tugas Ujian Akhir Semester (UAS) Mata Kuliah Web 2 dengan menerapkan konsep Decoupled Architecture menggunakan CodeIgniter 4 sebagai Backend API dan VueJS sebagai Frontend SPA.
+
+# Link YouTube
+https://youtu.be/Zer0LA2X13Y?si=WZJdtgkyiZ1Tlpom
