@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E-Report API Tester</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #333; }
+        .test-section { border: 1px solid #ddd; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        input, button { padding: 10px; margin: 5px 0; }
+        input { width: 300px; }
+        button { background: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 3px; }
+        button:hover { background: #45a049; }
+        .response { background: #f5f5f5; padding: 10px; margin-top: 10px; border-radius: 3px; max-height: 300px; overflow-y: auto; }
+        .success { color: green; }
+        .error { color: red; }
+        pre { background: #f9f9f9; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>E-Report API Tester</h1>
+        
+        <div class="test-section">
+            <h2>1. Home Endpoint</h2>
+            <button onclick="testHome()">Test Home</button>
+            <div id="homeResponse" class="response"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Login</h2>
+            <input type="text" id="username" placeholder="Username (admin)" value="admin">
+            <input type="password" id="password" placeholder="Password (admin123)" value="admin123">
+            <button onclick="testLogin()">Test Login</button>
+            <div id="loginResponse" class="response"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Get Reports</h2>
+            <button onclick="testReports()">Get Reports</button>
+            <div id="reportsResponse" class="response"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>4. Logout (Requires Token)</h2>
+            <input type="text" id="token" placeholder="Token from login">
+            <button onclick="testLogout()">Test Logout</button>
+            <div id="logoutResponse" class="response"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+
+        function testHome() {
+            fetch('http://localhost:8080/')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('homeResponse').innerHTML = `<span class="success">✓ Success</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                })
+                .catch(e => document.getElementById('homeResponse').innerHTML = `<span class="error">✗ Error: ${e}</span>`);
+        }
+
+        function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch(API_URL + '/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.token) {
+                    document.getElementById('token').value = data.token;
+                    document.getElementById('loginResponse').innerHTML = `<span class="success">✓ Login Success</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    document.getElementById('loginResponse').innerHTML = `<span class="error">✗ Login Failed</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            })
+            .catch(e => document.getElementById('loginResponse').innerHTML = `<span class="error">✗ Error: ${e}</span>`);
+        }
+
+        function testReports() {
+            fetch(API_URL + '/reports')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('reportsResponse').innerHTML = `<span class="success">✓ Success (${data.length} reports)</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                })
+                .catch(e => document.getElementById('reportsResponse').innerHTML = `<span class="error">✗ Error: ${e}</span>`);
+        }
+
+        function testLogout() {
+            const token = document.getElementById('token').value;
+            if (!token) {
+                document.getElementById('logoutResponse').innerHTML = `<span class="error">✗ No token provided</span>`;
+                return;
+            }
+
+            fetch(API_URL + '/logout', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + token }
+            })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('logoutResponse').innerHTML = `<span class="success">✓ Success</span><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            })
+            .catch(e => document.getElementById('logoutResponse').innerHTML = `<span class="error">✗ Error: ${e}</span>`);
+        }
+    </script>
+</body>
+</html>

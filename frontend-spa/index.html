@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Report - Layanan Pengaduan Masyarakat</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue-router@4/dist/vue-router.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+    <div id="app">
+        <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-sky-100 px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-xl font-bold text-sky-600 tracking-wide">🕊️ E-Report</span>
+            </div>
+            <div class="space-x-4 flex items-center">
+                <router-link to="/" class="text-slate-600 hover:text-sky-500 font-medium transition">Beranda</router-link>
+                <router-link v-if="isLoggedIn" to="/dashboard" class="text-slate-600 hover:text-sky-500 font-medium transition">Dashboard</router-link>
+                <router-link v-if="!isLoggedIn" to="/login" class="bg-sky-400 hover:bg-sky-500 text-white px-4 py-2 rounded-full font-medium shadow-sm transition">Login</router-link>
+                <button v-if="isLoggedIn" @click="handleLogout" class="bg-rose-400 hover:bg-rose-500 text-white px-4 py-2 rounded-full font-medium shadow-sm transition">Logout</button>
+            </div>
+        </nav>
+
+        <main class="container mx-auto p-6">
+            <router-view></router-view>
+        </main>
+    </div>
+
+    <script src="components/Home.js"></script>
+    <script src="components/Login.js"></script>
+    <script src="components/Dashboard.js"></script>
+
+    <script>
+        const API_URL = 'http://localhost:8080/'; 
+
+        // Axios Interceptors
+        axios.interceptors.request.use(config => {
+            const token = localStorage.getItem('token');
+            if (token) { config.headers.Authorization = `Bearer ${token}`; }
+            return config;
+        }, error => Promise.reject(error));
+
+        axios.interceptors.response.use(
+            response => response,
+            error => {
+                if (error.response && error.response.status === 401) {
+                    alert('Sesi Anda telah habis atau Anda tidak memiliki akses.');
+                    localStorage.clear();
+                    window.location.hash = '/login'; 
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        // Routing Konfigurasi (Menggunakan komponen yang di-load di atas)
+        const routes = [
+            { path: '/', component: Home },
+            { path: '/login', component: Login },
+            { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true } }
+        ];
+
+        const router = VueRouter.createRouter({
+            history: VueRouter.createWebHashHistory(),
+            routes
+        });
+
+        router.beforeEach((to, from, next) => {
+            const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (to.meta.requiresAuth && !loggedIn) {
+                next('/login'); 
+            } else {
+                next();
+            }
+        });
+
+        const app = Vue.createApp({
+            data() { return { isLoggedIn: false } },
+            methods: {
+                checkLogin() { this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; },
+                handleLogout() {
+                    localStorage.clear();
+                    this.checkLogin();
+                    router.push('/');
+                }
+            },
+            mounted() { this.checkLogin(); }
+        });
+
+        app.use(router);
+        app.mount('#app');
+    </script>
+</body>
+</html>
