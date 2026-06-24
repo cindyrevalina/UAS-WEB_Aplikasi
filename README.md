@@ -68,6 +68,8 @@ Format file yang didukung:
 
 <img width="1600" height="758" alt="image" src="https://github.com/user-attachments/assets/24d79512-03d4-46b5-aaab-27c00407b9ce" />
 
+<img width="1600" height="764" alt="image" src="https://github.com/user-attachments/assets/f31a259f-e0b2-40a2-9fa5-820547e30bd3" />
+
 
 Validasi yang diterapkan:
 
